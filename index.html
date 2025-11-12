@@ -1,0 +1,3587 @@
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BicycleParts - Vehículos de Alta Gama</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="./img/logoFan.png   ">
+    <style>
+                /* Variables y estilos generales */
+                :root {
+                    /* Tema: Negro + Verde Neón + Blanco */
+                    --primary: #000000;       /* fondo principal (negro) */
+                    --secondary: #39FF14;     /* verde neón (acento principal) */
+                    --accent: #7CFC00;        /* acento secundario (verde claro) */
+                    --light: #FFFFFF;         /* texto claro (blanco) */
+                    --dark: #0B0B0B;          /* superficies oscuras (tarjetas) */
+                    --gray: #111111;          /* grises oscuros */
+                    --light-gray: #141414;    /* gris ligeramente más claro para hover/contrastes */
+                }
+
+                /* Estilos del modal de producto */
+                .product-modal {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.9);
+                    z-index: 1000;
+                    overflow-y: auto;
+                }
+
+                .product-modal.active {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .modal-content {
+                    background: var(--dark);
+                    width: 90%;
+                    max-width: 1200px;
+                    margin: 20px;
+                    border-radius: 10px;
+                    position: relative;
+                    display: flex;
+                    gap: 30px;
+                    padding: 30px;
+                }
+
+                .modal-image {
+                    flex: 1;
+                    max-width: 600px;
+                }
+
+                .modal-image img {
+                    width: 100%;
+                    height: auto;
+                    border-radius: 8px;
+                }
+
+                .modal-details {
+                    flex: 1;
+                    color: var(--light);
+                }
+
+                .modal-close {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    background: none;
+                    border: none;
+                    color: var(--light);
+                    font-size: 24px;
+                    cursor: pointer;
+                    z-index: 10;
+                }
+
+                .modal-close:hover {
+                    color: var(--secondary);
+                }
+
+                .modal-details h2 {
+                    font-size: 32px;
+                    margin-bottom: 20px;
+                }
+
+                .modal-price {
+                    font-size: 2em;
+                    color: var(--secondary);
+                    margin: 20px 0;
+                }
+
+                .modal-description {
+                    margin: 20px 0;
+                    line-height: 1.6;
+                }
+
+                .specs-list {
+                    list-style: none;
+                    margin: 20px 0;
+                }
+
+                .specs-list li {
+                    margin: 10px 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+
+                .specs-list i {
+                    color: var(--secondary);
+                    width: 20px;
+                    text-align: center;
+                }
+
+                .color-selector {
+                    display: flex;
+                    gap: 10px;
+                    margin: 20px 0;
+                }
+
+                .color-btn {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    border: 2px solid transparent;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+
+                .color-btn:hover {
+                    transform: scale(1.1);
+                }
+
+                .color-btn.active {
+                    border-color: var(--secondary);
+                    box-shadow: 0 0 10px var(--secondary);
+                }
+
+                @media (max-width: 768px) {
+                    .modal-content {
+                        flex-direction: column;
+                    }
+
+                    .modal-image {
+                        max-width: 100%;
+                    }
+                }
+
+                /* CSS para Modal del Catálogo */
+                .catalogo-modal {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.95);
+                    z-index: 1001;
+                    align-items: center;
+                    justify-content: center;
+                    animation: fadeInModal 0.3s ease-out;
+                }
+
+                .catalogo-modal.active {
+                    display: flex;
+                }
+
+                .modal-image-container {
+                    position: relative;
+                    max-width: 90%;
+                    max-height: 90vh;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 20px;
+                    animation: zoomInContainer 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    transform-origin: center;
+                }
+
+                .modal-image-container img {
+                    max-width: 100%;
+                    max-height: 70vh;
+                    object-fit: contain;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 32px rgba(0, 212, 170, 0.2);
+                    animation: imageZoomIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+
+                /* Animaciones */
+                @keyframes fadeInModal {
+                    from {
+                        opacity: 0;
+                    }
+                    to {
+                        opacity: 1;
+                    }
+                }
+
+                @keyframes zoomInContainer {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.3) translateY(-50px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: scale(1) translateY(0);
+                    }
+                }
+
+                @keyframes imageZoomIn {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.2);
+                        filter: blur(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: scale(1);
+                        filter: blur(0);
+                    }
+                }
+
+                .catalogo-modal-info {
+                    text-align: center;
+                    color: var(--light);
+                    animation: fadeInText 0.6s ease-out 0.2s both;
+                }
+
+                @keyframes fadeInText {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .catalogo-modal-info h3 {
+                    font-size: 24px;
+                    margin-bottom: 10px;
+                    color: var(--secondary);
+                }
+
+                .catalogo-modal-info p {
+                    font-size: 18px;
+                    color: var(--secondary);
+                    font-weight: bold;
+                }
+
+                .catalogo-modal.closing {
+                    animation: fadeOutModal 0.3s ease-out forwards !important;
+                }
+
+                .catalogo-modal.closing .modal-image-container {
+                    animation: zoomOutContainer 0.3s ease-in forwards !important;
+                }
+
+                .catalogo-modal.closing .modal-image-container img {
+                    animation: imageZoomOut 0.3s ease-in forwards !important;
+                }
+
+                .catalogo-modal.closing .catalogo-modal-info {
+                    animation: fadeOutText 0.2s ease-out forwards !important;
+                }
+
+                @keyframes fadeOutModal {
+                    from {
+                        opacity: 1;
+                    }
+                    to {
+                        opacity: 0;
+                    }
+                }
+
+                @keyframes zoomOutContainer {
+                    from {
+                        opacity: 1;
+                        transform: scale(1) translateY(0);
+                    }
+                    to {
+                        opacity: 0;
+                        transform: scale(0.3) translateY(50px);
+                    }
+                }
+
+                @keyframes imageZoomOut {
+                    from {
+                        opacity: 1;
+                        transform: scale(1);
+                        filter: blur(0);
+                    }
+                    to {
+                        opacity: 0;
+                        transform: scale(0.2);
+                        filter: blur(10px);
+                    }
+                }
+
+                @keyframes fadeOutText {
+                    from {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                    to {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .modal-image-container {
+                        max-width: 95%;
+                    }
+
+                    .modal-image-container img {
+                        max-height: 60vh;
+                    }
+
+                    .catalogo-modal-info h3 {
+                        font-size: 18px;
+                    }
+
+                    .catalogo-modal-info p {
+                        font-size: 14px;
+                    }
+                }
+
+                /* Modal de producto */
+                .product-modal {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.9);
+                    z-index: 1000;
+                    overflow-y: auto;
+                }
+
+                .product-modal.active {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .modal-content {
+                    background: var(--dark);
+                    width: 90%;
+                    max-width: 1200px;
+                    margin: 20px;
+                    border-radius: 10px;
+                    position: relative;
+                    display: flex;
+                    gap: 30px;
+                    padding: 30px;
+                }
+
+                .modal-close {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    background: none;
+                    border: none;
+                    color: var(--light);
+                    font-size: 24px;
+                    cursor: pointer;
+                    z-index: 10;
+                }
+
+                .modal-close:hover {
+                    color: var(--secondary);
+                }
+
+                .modal-image {
+                    flex: 1;
+                    max-width: 600px;
+                }
+
+                .modal-image img {
+                    width: 100%;
+                    height: auto;
+                    border-radius: 8px;
+                }
+
+                .modal-details {
+                    flex: 1;
+                    color: var(--light);
+                }
+
+                .color-selector {
+                    display: flex;
+                    gap: 10px;
+                    margin: 20px 0;
+                }
+
+                .color-btn {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    border: 2px solid transparent;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+
+                .color-btn:hover {
+                    transform: scale(1.1);
+                }
+
+                .color-btn.active {
+                    border-color: var(--secondary);
+                    box-shadow: 0 0 10px var(--secondary);
+                }
+
+                .specs-list {
+                    margin: 20px 0;
+                }
+
+                .specs-list li {
+                    margin: 10px 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+
+                .specs-list i {
+                    color: var(--secondary);
+                }
+
+                .modal-price {
+                    font-size: 2em;
+                    color: var(--secondary);
+                    margin: 20px 0;
+                }
+
+                .modal-description {
+                    margin: 20px 0;
+                    line-height: 1.6;
+                }
+
+                @media (max-width: 768px) {
+                    .modal-content {
+                        flex-direction: column;
+                    }
+                }
+
+                /* Estilos para el selector de colores */
+                .color-selector {
+                    display: none;
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background: rgba(0,0,0,0.95);
+                    padding: 20px;
+                    border-radius: 0 0 8px 8px;
+                    z-index: 100;
+                    transition: all 0.3s ease;
+                }
+
+                .color-selector.active {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    justify-content: center;
+                }
+
+                .color-option {
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    overflow: hidden;
+                    border: 2px solid transparent;
+                    transition: all 0.3s ease;
+                }
+
+                .color-option img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+                .color-option:hover {
+                    transform: scale(1.1);
+                    border-color: var(--secondary);
+                }
+
+                .color-option.active {
+                    border-color: var(--secondary);
+                    box-shadow: 0 0 15px var(--secondary);
+                }
+
+                .color-name {
+                    position: absolute;
+                    bottom: -25px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    color: var(--light);
+                    font-size: 12px;
+                    white-space: nowrap;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                }
+
+                .color-option:hover .color-name {
+                    opacity: 1;
+                }
+
+                .vehicle-card {
+                    position: relative;
+                }
+
+                .color-toggle {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    background: rgba(0,0,0,0.7);
+                    color: var(--light);
+                    border: none;
+                    padding: 8px 12px;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    font-size: 14px;
+                    transition: all 0.3s ease;
+                    z-index: 10;
+                }
+
+                .color-toggle:hover {
+                    background: var(--secondary);
+                    color: var(--dark);
+                }
+        
+                /* Estilos del modal */
+                .product-modal {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.9);
+                    z-index: 9999;
+                }
+
+                .product-modal.active {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .modal-content {
+                    background: var(--dark);
+                    width: 90%;
+                    max-width: 1200px;
+                    border-radius: 10px;
+                    display: flex;
+                    gap: 30px;
+                    padding: 30px;
+                    position: relative;
+                }
+
+                .modal-close {
+                    position: absolute;
+                    top: 15px;
+                    right: 15px;
+                    background: none;
+                    border: none;
+                    color: var(--light);
+                    font-size: 24px;
+                    cursor: pointer;
+                    z-index: 1;
+                }
+
+                .modal-close:hover {
+                    color: var(--secondary);
+                }
+
+                .modal-image {
+                    flex: 1;
+                    max-width: 600px;
+                }
+
+                .modal-image img {
+                    width: 100%;
+                    height: auto;
+                    border-radius: 8px;
+                }
+
+                .modal-details {
+                    flex: 1;
+                    color: var(--light);
+                }
+
+                .modal-details h2 {
+                    font-size: 32px;
+                    margin-bottom: 20px;
+                }
+
+                .modal-price {
+                    font-size: 28px;
+                    color: var(--secondary);
+                    margin: 20px 0;
+                }
+
+                .specs-list {
+                    list-style: none;
+                    margin: 20px 0;
+                }
+
+                .specs-list li {
+                    margin: 10px 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+
+                .specs-list i {
+                    color: var(--secondary);
+                }
+
+                .color-selector {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 15px;
+                    margin: 20px 0;
+                    justify-content: center;
+                    padding: 15px;
+                }
+
+                .color-btn {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    border: 3px solid transparent;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    position: relative;
+                }
+
+                .color-btn:hover {
+                    transform: scale(1.1);
+                }
+
+                .color-btn.active {
+                    border-color: var(--secondary);
+                    box-shadow: 0 0 10px var(--secondary);
+                }
+
+                @media (max-width: 768px) {
+                    .modal-content {
+                        flex-direction: column;
+                    }
+
+                    .modal-image {
+                        max-width: 100%;
+                    }
+                }
+
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                    font-family: 'Montserrat', sans-serif;
+                }
+        
+                body {
+                    background-color: var(--primary);
+                    color: var(--light);
+                    line-height: 1.6;
+                }
+        
+                .container {
+                    width: 90%;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 0 15px;
+                }
+        
+                /* Header */
+                header {
+                    background-color: var(--primary);
+                    color: var(--light);
+                    padding: 20px 0;
+                    position: sticky;
+                    top: 0;
+                    z-index: 1000;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+                }
+        
+                .header-container {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+        
+                .logo {
+                    font-size: 28px;
+                    font-weight: 700;
+                    color: var(--light);
+                    text-decoration: none;
+                    display: flex;
+                    align-items: center;
+                }
+        
+                .logo span {
+                    color: var(--secondary);
+                }
+        
+                nav ul {
+                    display: flex;
+                    list-style: none;
+                    gap: 20px;
+                }
+        
+                nav ul li {
+                    position: relative;
+                }
+        
+                nav ul li a {
+                    color: var(--light);
+                    text-decoration: none;
+                    font-weight: 500;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    background: rgba(255, 255, 255, 0.1);
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                }
+        
+                nav ul li a:hover {
+                    color: var(--secondary);
+                    background: rgba(255, 255, 255, 0.15);
+                    border-color: var(--secondary);
+                    transform: translateY(-2px);
+                }
+        
+                nav ul li a i {
+                    margin-left: 5px;
+                    font-size: 12px;
+                    transition: transform 0.3s ease;
+                }
+                
+                nav ul li a:hover i {
+                    transform: rotate(180deg);
+                }
+        
+                /* Dropdown Menu */
+                .dropdown-menu {
+                    position: absolute;
+                    top: calc(100% + 10px);
+                    left: 50%;
+                    transform: translateX(-50%) translateY(-10px);
+                    background: rgba(255, 255, 255, 0.1);
+                    backdrop-filter: blur(10px);
+                    min-width: 200px;
+                    padding: 10px;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: all 0.3s ease;
+                    z-index: 1000;
+                }
+
+                .dropdown-menu::before {
+                    content: '';
+                    position: absolute;
+                    top: -6px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 12px;
+                    height: 12px;
+                    background: inherit;
+                    border-left: 1px solid rgba(255, 255, 255, 0.1);
+                    border-top: 1px solid rgba(255, 255, 255, 0.1);
+                    backdrop-filter: blur(10px);
+                    transform: rotate(45deg);
+                }
+        
+                nav ul li:hover .dropdown-menu {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateX(-50%) translateY(0);
+                }
+        
+                .dropdown-menu a {
+                    color: var(--light) !important;
+                    padding: 12px 20px;
+                    display: block;
+                    border-radius: 8px;
+                    margin-bottom: 5px;
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid transparent;
+                    backdrop-filter: blur(5px);
+                }
+        
+                .dropdown-menu a:hover {
+                    background: rgba(255, 255, 255, 0.15);
+                    color: var(--secondary) !important;
+                    border-color: var(--secondary);
+                    transform: translateY(-2px);
+                }
+        
+                .dropdown-menu a:last-child {
+                    margin-bottom: 0;
+                }
+        
+                .mobile-menu {
+                    display: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                }
+        
+                /* Hero Section */
+                .hero {
+                    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('./img/1.png');
+                    background-size: cover;
+                    background-position: center;
+                    height: 70vh;
+                    display: flex;
+                    align-items: center;
+                    text-align: center;
+                    color: var(--light);
+                }
+        
+                .hero-content {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+        
+                .hero h1 {
+                    font-size: 48px;
+                    margin-bottom: 20px;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                }
+        
+                .hero p {
+                    font-size: 20px;
+                    margin-bottom: 30px;
+                }
+        
+                .btn {
+                    --green: #1BFD9C;
+                    font-size: 15px;
+                    padding: 0.7em 2.7em;
+                    letter-spacing: 0.06em;
+                    position: relative;
+                    font-family: inherit;
+                    border-radius: 0.6em;
+                    overflow: hidden;
+                    transition: all 0.3s;
+                    line-height: 1.4em;
+                    border: 2px solid var(--green);
+                    background: linear-gradient(to right, rgba(27, 253, 156, 0.1) 1%, transparent 40%,transparent 60% , rgba(27, 253, 156, 0.1) 100%);
+                    color: var(--green);
+                    box-shadow: inset 0 0 10px rgba(27, 253, 156, 0.4), 0 0 9px 3px rgba(27, 253, 156, 0.1);
+                    text-decoration: none;
+                    cursor: pointer;
+                    font-weight: 600;
+                    display: inline-block;
+                }
+
+                .btn:hover {
+                    color: #82ffc9;
+                    box-shadow: inset 0 0 10px rgba(27, 253, 156, 0.6), 0 0 9px 3px rgba(27, 253, 156, 0.2);
+                }
+
+                .btn:before {
+                    content: "";
+                    position: absolute;
+                    left: -4em;
+                    width: 4em;
+                    height: 100%;
+                    top: 0;
+                    transition: transform .4s ease-in-out;
+                    background: linear-gradient(to right, transparent 1%, rgba(27, 253, 156, 0.1) 40%,rgba(27, 253, 156, 0.1) 60% , transparent 100%);
+                }
+
+                .btn:hover:before {
+                    transform: translateX(15em);
+                }
+
+                /* Secciones */
+                section {
+                    padding: 80px 0;
+                }
+        
+                .section-title {
+                    text-align: center;
+                    margin-bottom: 50px;
+                }
+        
+                .section-title h2 {
+                    font-size: 36px;
+                    margin-bottom: 15px;
+                    position: relative;
+                    display: inline-block;
+                }
+        
+                .section-title h2::after {
+                    content: '';
+                    position: absolute;
+                    width: 70px;
+                    height: 3px;
+                    background-color: var(--secondary);
+                    bottom: -10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                }
+        
+                /* Vehículos Section */
+                .vehicles {
+                    background-color: transparent;
+                }
+        
+                .category-title {
+                    font-size: 28px;
+                    margin: 60px 0 30px;
+                    padding-bottom: 10px;
+                    border-bottom: 2px solid var(--secondary);
+                    color: var(--light);
+                }
+        
+                .vehicles-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                    gap: 30px;
+                }
+        
+                .vehicle-card {
+                    background-color: var(--dark);
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+                    transition: transform 0.3s, box-shadow 0.3s;
+                }
+        
+                .vehicle-card:hover {
+                    transform: translateY(-10px);
+                    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8);
+                }
+        
+                .vehicle-image {
+                    height: 220px;
+                    overflow: hidden;
+                    background-color: var(--gray);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+        
+                .vehicle-image img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    transition: transform 0.5s;
+                }
+        
+                .vehicle-card:hover .vehicle-image img {
+                    transform: scale(1.1);
+                }
+        
+                .vehicle-info {
+                    padding: 25px;
+                    color: var(--light);
+                }
+        
+                .vehicle-info h3 {
+                    font-size: 22px;
+                    margin-bottom: 10px;
+                }
+        
+                .vehicle-info .price {
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: var(--secondary);
+                    margin-bottom: 15px;
+                }
+        
+                .vehicle-info .features {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 15px;
+                    font-size: 14px;
+                }
+        
+                .vehicle-info .features span {
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                }
+        
+                /* Ofertas Section */
+                .offers {
+                    background-color: var(--light-gray);
+                }
+        
+                .offer-badge {
+                    background-color: var(--secondary);
+                    color: var(--primary);
+                    padding: 5px 10px;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    display: inline-block;
+                    margin-bottom: 10px;
+                }
+        
+                /* Footer */
+               /* === FOOTER RESPONSIVE === */
+@media (max-width: 768px) {
+  footer {
+    padding: 40px 10px;
+    text-align: center;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+    /* En móvil las columnas se centran */
+    .footer-column {
+        text-align: center;
+    }
+
+  .footer-column h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+    .footer-column ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-column ul li {
+        margin: 8px 0;
+        display: block;
+        text-align: center;
+    }
+
+  .footer-column ul li a {
+    font-size: 16px;
+    color: #ccc;
+  }
+
+  .footer-column ul li a:hover {
+    color: var(--secondary);
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+
+  .copyright {
+        font-size: 13px;
+        padding-top: 20px;
+        text-align: center;
+  }
+}
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+.logo span {
+  color: #00ff00; /* verde del texto PARTS */
+}
+
+.logo-img {
+  height: 32px; /* ajusta según el tamaño del texto */
+  width: auto;
+  margin-right: 8px; /* espacio entre el logo y el texto */
+  object-fit: contain;
+}
+
+        
+                .social-links {
+                    display: flex;
+                    gap: 15px;
+                    margin-top: 20px;
+                }
+        
+                .social-links a {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 40px;
+                    height: 40px;
+                    background-color: var(--gray);
+                    color: var(--light);
+                    border-radius: 50%;
+                    text-decoration: none;
+                    transition: background-color 0.3s;
+                }
+        
+                .social-links a:hover {
+                    background-color: var(--secondary);
+                }
+        
+                .copyright {
+                    text-align: center;
+                    padding-top: 30px;
+                    border-top: 1px solid var(--gray);
+                    font-size: 14px;
+                    color: #999;
+                }
+        
+                /* Botón de redes sociales lateral */
+                .social-menu {
+                    position: fixed;
+                    right: -200px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    z-index: 1000;
+                    transition: right 0.3s ease;
+                }
+
+                .social-menu.active {
+                    right: 20px;
+                }
+
+                .toggle-btn {
+                    --green: #1BFD9C;
+                    position: absolute;
+                    left: -40px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 40px;
+                    height: 40px;
+                    border: 2px solid var(--green);
+                    background: linear-gradient(to right, rgba(27, 253, 156, 0.1) 1%, transparent 40%,transparent 60% , rgba(27, 253, 156, 0.1) 100%);
+                    border-radius: 5px 0 0 5px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    box-shadow: inset 0 0 10px rgba(27, 253, 156, 0.4), -2px 0 9px 3px rgba(27, 253, 156, 0.1);
+                    overflow: hidden;
+                    transition: all 0.3s;
+                }
+
+                .toggle-btn:hover {
+                    box-shadow: inset 0 0 10px rgba(27, 253, 156, 0.6), -2px 0 9px 3px rgba(27, 253, 156, 0.2);
+                }
+
+                .toggle-btn:before {
+                    content: "";
+                    position: absolute;
+                    left: -4em;
+                    width: 4em;
+                    height: 100%;
+                    top: 0;
+                    transition: transform .4s ease-in-out;
+                    background: linear-gradient(to right, transparent 1%, rgba(27, 253, 156, 0.1) 40%,rgba(27, 253, 156, 0.1) 60% , transparent 100%);
+                }
+
+                .toggle-btn:hover:before {
+                    transform: translateX(15em);
+                }
+
+                .toggle-btn i {
+                    color: var(--green);
+                    font-size: 20px;
+                    transition: transform 0.3s;
+                }
+
+                .toggle-btn:hover i {
+                    color: #82ffc9;
+                }
+
+                .social-menu.active .toggle-btn i {
+                    transform: rotate(180deg);
+                }
+
+                /* From Uiverse.io by svqantonio */ 
+                .main {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5em;
+                }
+
+                .up {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 0.5em;
+                }
+
+                .down {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 0.5em;
+                }
+
+                .card1 {
+                    width: 90px;
+                    height: 90px;
+                    outline: none;
+                    border: none;
+                    background: white;
+                    border-radius: 90px 5px 5px 5px;
+                    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+                    transition: .2s ease-in-out;
+                }
+
+                .instagram {
+                    margin-top: 1.5em;
+                    margin-left: 1.2em;
+                    fill: #cc39a4;
+                }
+
+                .card2 {
+                    width: 90px;
+                    height: 90px;
+                    outline: none;
+                    border: none;
+                    background: white;
+                    border-radius: 5px 90px 5px 5px;
+                    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+                    transition: .2s ease-in-out;
+                }
+
+                .facebook {
+                    margin-top: 1.5em;
+                    margin-left: -.9em;
+                    fill: #03A9F4;
+                }
+
+                .card3 {
+                    width: 90px;
+                    height: 90px;
+                    outline: none;
+                    border: none;
+                    background: white;
+                    border-radius: 5px 5px 5px 90px;
+                    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+                    transition: .2s ease-in-out;
+                }
+
+                .whatsapp {
+                    margin-top: -.6em;
+                    margin-left: 1.2em;
+                    fill: #00ff00;
+                }
+
+                .card4 {
+                    width: 90px;
+                    height: 90px;
+                    outline: none;
+                    border: none;
+                    background: white;
+                    border-radius: 5px 5px 90px 5px;
+                    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+                    transition: .2s ease-in-out;
+                }
+
+                .gmail {
+                    margin-top: -.9em;
+                    margin-left: -1.2em;
+                    fill: #f14336;
+                }
+
+                .maps {
+                    margin-top: -.9em;
+                    margin-left: -1.2em;
+                    fill: #f14336;
+                }
+
+                .card1:hover {
+                    cursor: pointer;
+                    scale: 1.1;
+                    background-color: #cc39a4;
+                }
+
+                .card1:hover .instagram {
+                    fill: white;
+                }
+
+                .card2:hover {
+                    cursor: pointer;
+                    scale: 1.1;
+                    background-color: #1877f2;
+                }
+
+                .card2:hover .facebook {
+                    fill: white;
+                }
+
+                .card3:hover {
+                    cursor: pointer;
+                    scale: 1.1;
+                    background-color: #00ff00;
+                }
+
+                .card3:hover .whatsapp {
+                    fill: white;
+                }
+
+                .card4:hover {
+                    cursor: pointer;
+                    scale: 1.1;
+                    background-color: #FF0004;
+                }
+
+                .card4:hover .gmail {
+                    fill: white;
+                }
+                
+                .card4:hover .maps {
+                    fill: white;
+                }
+        
+                                /* From Uiverse.io by aadium */
+                .loader-overlay {
+                    position: fixed;
+                    inset: 0;
+                    display: none;
+                    align-items: center;
+                    justify-content: center;
+                    background: rgba(0,0,0,0.8);
+                    z-index: 2000;
+                }
+
+                .loader {
+                    overflow: hidden;
+                    position: relative;
+                    width: 200px;
+                    height: 120px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .wheel {
+                    width: 80px;
+                    height: 80px;
+                    animation: rolling 1.5s linear infinite;
+                    filter: drop-shadow(0 0 8px rgba(57,255,20,0.3));
+                }
+
+                #rim {
+                    fill: none;
+                    stroke: var(--accent);
+                    stroke-width: 2;
+                }
+
+                #tire {
+                    fill: var(--primary);
+                    stroke: var(--secondary);
+                    stroke-width: 3;
+                }
+
+                .road {
+                    position: absolute;
+                    bottom: 10px;
+                    width: 100%;
+                    height: 10px;
+                    border-radius: 5em;
+                    background-color: var(--secondary);
+                    animation: road-move 2s linear infinite;
+                }
+
+                @keyframes rolling {
+                    to {
+                        transform: rotate(-360deg);
+                    }
+                }
+
+                @keyframes road-move {
+                    from {
+                        transform: translateX(-140%);
+                    }
+                    to {
+                        transform: translateX(100%);
+                    }
+                }
+
+                                /* Páginas de categorías */
+                .category-page {
+                    display: none;
+                    padding: 80px 0;
+                }
+        
+                .category-page.active {
+                    display: block;
+                }
+        
+                .back-btn {
+                    --green: #1BFD9C;
+                    font-size: 15px;
+                    padding: 0.7em 2.7em;
+                    letter-spacing: 0.06em;
+                    position: relative;
+                    font-family: inherit;
+                    border-radius: 0.6em;
+                    overflow: hidden;
+                    transition: all 0.3s;
+                    line-height: 1.4em;
+                    border: 2px solid var(--green);
+                    background: linear-gradient(to right, rgba(27, 253, 156, 0.1) 1%, transparent 40%,transparent 60% , rgba(27, 253, 156, 0.1) 100%);
+                    color: var(--green);
+                    box-shadow: inset 0 0 10px rgba(27, 253, 156, 0.4), 0 0 9px 3px rgba(27, 253, 156, 0.1);
+                    text-decoration: none;
+                    margin-bottom: 30px;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+        
+                .back-btn:hover {
+                    color: #82ffc9;
+                    box-shadow: inset 0 0 10px rgba(27, 253, 156, 0.6), 0 0 9px 3px rgba(27, 253, 156, 0.2);
+                }
+
+                .back-btn:before {
+                    content: "";
+                    position: absolute;
+                    left: -4em;
+                    width: 4em;
+                    height: 100%;
+                    top: 0;
+                    transition: transform .4s ease-in-out;
+                    background: linear-gradient(to right, transparent 1%, rgba(27, 253, 156, 0.1) 40%,rgba(27, 253, 156, 0.1) 60% , transparent 100%);
+                }
+
+                .back-btn:hover:before {
+                    transform: translateX(15em);
+                }
+
+                .back-btn i {
+                    color: inherit;
+                }
+        
+                /* Responsive */
+                /* Mobile Optimizations */
+                @media (max-width: 768px) {
+                    /* Header & Navigation */
+                    .header-container {
+                        position: relative;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 15px;
+                        text-align: center;
+                    }
+
+                    .logo {
+                        margin: 0 auto;
+                        font-size: 24px;
+                    }
+            
+                    /* Mostrar directamente los botones en móvil (sin hamburguesa) */
+                    .mobile-menu {
+                        display: none;
+                    }
+
+                    nav {
+                        position: static;
+                        width: 100%;
+                        height: auto;
+                        background: transparent;
+                        padding: 0;
+                        box-shadow: none;
+                        border: none;
+                    }
+
+                    /* Lista de navegación: mostrar botones centrados */
+                    nav ul {
+                        display: flex;
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                        gap: 10px;
+                        padding: 10px 0;
+                        margin: 0;
+                    }
+
+                    nav ul li {
+                        width: auto;
+                        list-style: none;
+                    }
+
+                    nav ul li a {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 10px 16px;
+                        font-size: 15px;
+                        background: rgba(27, 253, 156, 0.08);
+                        border: 1px solid rgba(27, 253, 156, 0.14);
+                        color: var(--light);
+                        border-radius: 8px;
+                        min-width: 90px;
+                        text-align: center;
+                    }
+
+                    nav ul li a:hover {
+                        background: rgba(27, 253, 156, 0.14);
+                        transform: none;
+                    }
+            
+                    .dropdown-menu {
+                        position: static;
+                        width: 100%;
+                        opacity: 1;
+                        visibility: visible;
+                        transform: none;
+                        background: transparent;
+                        margin: 5px 0 5px 15px;
+                        padding: 0;
+                        display: none;
+                        border: none;
+                        box-shadow: none;
+                    }
+
+                    .dropdown-menu a {
+                        padding: 12px 15px;
+                        font-size: 15px;
+                        border-left: 2px solid var(--secondary);
+                        background: rgba(27, 253, 156, 0.03) !important;
+                    }
+
+                    nav ul li:hover .dropdown-menu {
+                        display: block;
+                    }
+
+                    nav ul li a i {
+                        transition: transform 0.3s ease;
+                    }
+
+                    nav ul li:hover a i {
+                        transform: rotate(-180deg);
+                    }
+            
+                    .dropdown-menu::before {
+                        display: none;
+                    }
+            
+                    nav ul li:hover .dropdown-menu {
+                        display: block;
+                    }
+            
+                    /* Hero Section */
+                    .hero {
+                        height: 60vh;
+                        padding: 20px 0;
+                    }
+            
+                    .hero h1 {
+                        font-size: 32px;
+                        line-height: 1.2;
+                    }
+            
+                    .hero p {
+                        font-size: 16px;
+                        margin: 15px 0;
+                    }
+            
+                    /* Content Sections */
+                    section {
+                        padding: 40px 0;
+                    }
+            
+                    .section-title {
+                        margin-bottom: 30px;
+                    }
+            
+                    .section-title h2 {
+                        font-size: 28px;
+                    }
+            
+                    .vehicles-grid {
+                        grid-template-columns: 1fr;
+                        gap: 20px;
+                    }
+            
+                    .vehicle-card {
+                        margin: 0 10px;
+                    }
+            
+                    .vehicle-info {
+                        padding: 15px;
+                    }
+            
+                    .vehicle-info h3 {
+                        font-size: 20px;
+                    }
+            
+                    /* Modal Adjustments */
+                    .modal-content {
+                        flex-direction: column;
+                        padding: 15px;
+                        margin: 15px;
+                    }
+            
+                    .modal-image {
+                        max-width: 100%;
+                    }
+            
+                    .modal-details h2 {
+                        font-size: 24px;
+                    }
+            
+                    .color-selector {
+                        gap: 10px;
+                    }
+            
+                    /* Social Menu Mobile Optimization */
+                    .social-menu {
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        z-index: 1000;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-end;
+                    }
+
+                    .social-menu .main {
+                        background: rgba(0, 0, 0, 0.8);
+                        backdrop-filter: blur(10px);
+                        border-radius: 15px;
+                        padding: 10px;
+                        margin-top: 10px;
+                        transform: scale(0.8);
+                        transform-origin: bottom right;
+                        transition: all 0.3s ease;
+                        display: none;
+                    }
+
+                    .social-menu.active .main {
+                        display: flex;
+                    }
+
+                    .toggle-btn {
+                        position: relative;
+                        left: auto;
+                        top: auto;
+                        transform: none;
+                        width: 50px;
+                        height: 50px;
+                        border-radius: 25px;
+                        backdrop-filter: blur(10px);
+                    }
+
+                    .card1, .card2, .card3, .card4 {
+                        width: 60px;
+                        height: 60px;
+                        margin: 5px;
+                    }
+            
+                    /* Footer */
+                    footer {
+                        padding: 48px 0 24px;
+                        background: var(--primary);
+                        border-top: 1px solid rgba(255,255,255,0.03);
+                    }
+
+                    /* Footer grid: 3 columnas en desktop, centrado dentro del contenedor */
+                    .footer-content {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 40px;
+                        align-items: start;
+                        max-width: 1200px;
+                        margin: 0 auto;
+                        padding: 0 10px;
+                    }
+
+                    .footer-column {
+                        text-align: left;
+                        padding: 0 10px;
+                    }
+
+                    .footer-column h3 {
+                        font-size: 20px;
+                        margin-bottom: 12px;
+                        color: var(--light);
+                        position: relative;
+                        display: inline-block;
+                        padding-bottom: 8px;
+                        font-weight: 700;
+                    }
+
+                    .footer-column h3::after {
+                        content: '';
+                        position: absolute;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        bottom: -2px;
+                        width: 42px;
+                        height: 3px;
+                        background: var(--secondary);
+                        border-radius: 3px;
+                    }
+
+                    .footer-column p {
+                        color: #cfcfcf;
+                        line-height: 1.6;
+                        max-width: 360px;
+                        margin: 0 0 12px 0;
+                    }
+
+                    .footer-column ul {
+                        list-style: none;
+                        padding: 0;
+                        margin: 0;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                    }
+
+                    .footer-column ul li {
+                        margin: 0;
+                        color: #ddd;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        font-size: 15px;
+                    }
+
+                    .footer-column ul li a {
+                        color: #ddd;
+                        text-decoration: none;
+                        transition: color 0.12s ease;
+                    }
+
+                    .footer-column ul li a:hover {
+                        color: var(--secondary);
+                    }
+
+                    .social-links {
+                        display: flex;
+                        gap: 12px;
+                        margin-top: 12px;
+                    }
+
+                    .social-links a {
+                        width: 36px;
+                        height: 36px;
+                        border-radius: 50%;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: rgba(255,255,255,0.03);
+                        color: var(--light);
+                        border: 1px solid rgba(255,255,255,0.03);
+                    }
+
+                    .social-links a:hover {
+                        background: var(--secondary);
+                        color: var(--primary);
+                        transform: translateY(-2px);
+                    }
+
+                    /* Icono de contacto en círculo */
+                    .footer-column ul li i {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 34px;
+                        height: 34px;
+                        border-radius: 50%;
+                        background: rgba(255,255,255,0.04);
+                        color: var(--secondary);
+                        flex: 0 0 34px;
+                        font-size: 14px;
+                    }
+                }
+                /* ===== MENÚ RESPONSIVE ===== */
+@media (max-width: 768px) {
+    header {
+        position: relative;
+    }
+
+    /* Ocultar el icono de hamburguesa y mostrar los botones centrados */
+    .mobile-menu {
+        display: none;
+    }
+
+    nav {
+        position: static;
+        width: 100%;
+        background: transparent;
+        padding: 0;
+    }
+
+    nav ul {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px 0;
+        margin: 0;
+    }
+
+    nav ul li {
+        margin: 0;
+    }
+
+    nav ul li a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 16px;
+        font-size: 15px;
+        background: rgba(27, 253, 156, 0.08);
+        border: 1px solid rgba(27, 253, 156, 0.14);
+        color: var(--light);
+        border-radius: 8px;
+        min-width: 90px;
+        text-align: center;
+    }
+
+    nav ul li a:hover {
+        background: rgba(27, 253, 156, 0.14);
+    }
+
+    /* Submenús: en móvil se pueden abrir con el toque (se mantienen ocultos hasta tocar)
+         pero su estilo no romperá el layout de botones */
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        background: rgba(0,0,0,0.9);
+        padding: 8px;
+        border-radius: 8px;
+        margin-top: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1002;
+    }
+
+    nav ul li.active .dropdown-menu {
+        display: block;
+    }
+}
+
+/* Estilos para el Catálogo */
+.catalogo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+}
+
+.catalogo-grid .vehicle-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.catalogo-grid .vehicle-card:hover {
+    transform: translateY(-5px);
+    border-color: #00d4aa;
+    box-shadow: 0 8px 20px rgba(0, 212, 170, 0.2);
+}
+
+.catalogo-grid .vehicle-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: #0f0f0f;
+}
+
+.catalogo-grid .vehicle-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+}
+
+.catalogo-grid .vehicle-info {
+    padding: 15px;
+}
+
+.catalogo-grid .vehicle-info h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: #00d4aa;
+    text-align: center;
+}
+
+.catalogo-grid .vehicle-info p {
+    font-size: 0.9rem;
+    color: #ccc;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.catalogo-grid .vehicle-info .price {
+    font-size: 1.2rem;
+    color: #00d4aa;
+    font-weight: bold;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+  .catalogo-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .catalogo-grid .vehicle-image {
+    height: 150px;
+  }
+
+  .catalogo-grid .vehicle-info {
+    padding: 10px;
+  }
+
+  .catalogo-grid .vehicle-info h3 {
+    font-size: 0.85rem;
+  }
+
+  .catalogo-grid .vehicle-info p {
+    font-size: 0.8rem;
+  }
+
+  .catalogo-grid .vehicle-info .price {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .vehicles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .catalogo-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px;
+  }
+
+  .vehicle-card {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .catalogo-grid .vehicle-card {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .vehicle-image img {
+    width: 100%;
+    height: auto;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .hero p {
+    font-size: 16px;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 0.6em 2em;
+  }
+}
+
+
+                                @media (max-width: 768px) {
+    /* Uniformizar comportamiento móvil: ocultar hamburguesa y mostrar botones */
+    .mobile-menu { display: none; }
+
+    header { 
+        margin-bottom: 0;
+    }
+
+    .header-container {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 0 0 0;
+    }
+
+    .logo {
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    nav { 
+        position: static; 
+        width: 100%; 
+        padding: 0; 
+        margin: 0;
+        border-top: 1px solid rgba(27, 253, 156, 0.2);
+        padding-top: 12px;
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px 8px 15px 8px;
+        margin: 0;
+        list-style: none;
+    }
+
+    nav ul li {
+        position: relative;
+    }
+
+    nav ul li a {
+        padding: 12px 16px;
+        font-size: 12px;
+        border-radius: 10px;
+        background: rgba(27, 253, 156, 0.12);
+        border: 1.5px solid rgba(27, 253, 156, 0.35);
+        color: var(--light);
+        font-weight: 600;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+    }
+
+    nav ul li a:hover {
+        background: rgba(27, 253, 156, 0.22);
+        border-color: rgba(27, 253, 156, 0.7);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(27, 253, 156, 0.15);
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        background: rgba(0,0,0,0.95);
+        padding: 8px;
+        border-radius: 8px;
+        margin-top: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1002;
+    }
+
+    nav ul li.active .dropdown-menu { display: block; }
+}
+
+                /* Language switcher */
+                .lang-switcher {
+                    display: inline-flex;
+                    gap: 6px;
+                    margin-left: 16px;
+                    align-items: center;
+                }
+
+                .lang-switcher .lang-btn {
+                    background: transparent;
+                    border: 1px solid rgba(255,255,255,0.08);
+                    color: var(--light);
+                    padding: 6px 8px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-weight: 700;
+                    transition: all 0.18s ease;
+                }
+
+                .lang-switcher .lang-btn[data-active="true"] {
+                    background: var(--secondary);
+                    color: #000;
+                    border-color: var(--secondary);
+                    transform: translateY(-1px);
+                }
+
+            </style>
+    </head>
+    <script>
+function toggleMenu() {
+  const nav = document.querySelector('nav ul');
+  nav.classList.toggle('active');
+}
+
+</script>
+<script>
+document.querySelector('.mobile-menu').addEventListener('click', () => {
+  document.querySelector('nav ul').classList.toggle('active');
+});
+
+document.querySelectorAll('nav ul li a').forEach(link => {
+  link.addEventListener('click', e => {
+    const parent = e.target.closest('li');
+    if (parent.querySelector('.dropdown-menu')) {
+      e.preventDefault();
+      parent.classList.toggle('active');
+    }
+  });
+});
+</script>
+
+    <body>
+        <!-- Modal de Producto -->
+        <div id="productModal" class="product-modal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeProductModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="modal-image">
+                    <img id="modalProductImage" src="" alt="Producto">
+                </div>
+                <div class="modal-details">
+                    <h2 id="modalProductTitle"></h2>
+                    <div class="modal-price" id="modalProductPrice"></div>
+                    <div class="color-selector">
+                        <button class="color-btn active" style="background-color: #FFFFFF" data-color="white" data-image="./img/ABLANCOAMARILLO.png"></button>
+                        <button class="color-btn" style="background-color: #000000" data-color="black" data-image="./img/ANEGRO.png"></button>
+                        <button class="color-btn" style="background-color: #FF0000" data-color="red" data-image="./img/ABLANCOROJO.png"></button>
+                        <button class="color-btn" style="background-color: #0000FF" data-color="blue" data-image="./img/AAZUL.png"></button>
+                        <button class="color-btn" style="background-color: #FFA500" data-color="orange" data-image="./img/ANARANJA.png"></button>
+                        <button class="color-btn" style="background-color: #800080" data-color="purple" data-image="./img/AMORADO.png"></button>
+                    </div>
+                    <div class="modal-description" id="modalProductDesc"></div>
+                    <ul class="specs-list" id="modalProductSpecs"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Catálogo (Imagen en grande) -->
+        <div id="catalogoModal" class="catalogo-modal">
+            <div class="modal-image-container">
+                <button class="modal-close" onclick="closeCatalogoModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <img id="catalogoModalImage" src="" alt="Imagen Catálogo">
+                <div class="catalogo-modal-info">
+                    <h3 id="catalogoModalTitle"></h3>
+                    <p id="catalogoModalPrice"></p>
+                </div>
+            </div>
+        </div>
+        <!-- Loader overlay (hidden by default) -->
+        <div id="global-loader" class="loader-overlay" aria-hidden="true">
+            <div class="loader">
+                <svg class="wheel" viewBox="0 0 100 100">
+                    <!-- Neumático exterior -->
+                    <circle id="tire" cx="50" cy="50" r="48" />
+                    <!-- Aro interior -->
+                    <circle id="rim" cx="50" cy="50" r="40" />
+                    <!-- Centro -->
+                    <circle id="hub" cx="50" cy="50" r="8" fill="var(--accent)" />
+                    <!-- Radios -->
+                    <g id="spokes" stroke="var(--accent)" stroke-width="2">
+                        <line x1="50" y1="10" x2="50" y2="90" />
+                        <line x1="10" y1="50" x2="90" y2="50" />
+                        <line x1="22" y1="22" x2="78" y2="78" />
+                        <line x1="78" y1="22" x2="22" y2="78" />
+                        <line x1="34" y1="12" x2="66" y2="88" />
+                        <line x1="88" y1="34" x2="12" y2="66" />
+                        <line x1="12" y1="34" x2="88" y2="66" />
+                        <line x1="66" y1="12" x2="34" y2="88" />
+                    </g>
+                    <!-- Detalles del neumático -->
+                    <circle id="tire-detail" cx="50" cy="50" r="44" fill="none" stroke="var(--accent)" stroke-width="0.5" />
+                </svg>
+                <div class="road"></div>
+            </div>
+        </div>
+        <header>
+            <div class="container header-container">
+                <a href="#" class="logo" onclick="showPage('inicio')">   <img src="./img/logoFan.png" alt="Logo" class="logo-img">BICYCLE<span>PARTS</span></a>
+               <div class="mobile-menu" onclick="toggleMenu()">
+  <i class="fas fa-bars"></i>
+</div>
+                <nav>
+                    <ul>
+                        <li><a href="javascript:void(0);" onclick="showPage('inicio')">Inicio</a></li>
+                        <li>
+                            <a href="javascript:void(0)" class="has-dropdown">GW <i class="fas fa-chevron-down"></i></a>
+                            <div class="dropdown-menu">
+                                <a href="javascript:void(0)" onclick="showPage('gw-montana')">Ruta</a>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" class="has-dropdown">Classic <i class="fas fa-chevron-down"></i></a>
+                            <div class="dropdown-menu">
+                                <a href="javascript:void(0)" onclick="showPage('trek-montana')">Ruta</a>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" class="has-dropdown">Kids <i class="fas fa-chevron-down"></i></a>
+                            <div class="dropdown-menu">
+                                <a href="javascript:void(0)" onclick="showPage('specialized-montana')">Ruta</a>
+                            </div>
+                        </li>
+                        <li><a href="javascript:void(0);" onclick="showPage('catalogo')">Catálogo</a></li>
+                        <!--<li><a href="#" onclick="showPage('bicicletas')">Bicicletas</a></li>
+                        <li><a href="#" onclick="showPage('motos')">Motos</a></li>
+                        <li><a href="#" onclick="showPage('ofertas')">Ofertas</a></li>
+                        <li><a href="#" onclick="showPage('nuevos')">Nuevos Lanzamientos</a></li>-->
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+    <!-- Página de Inicio -->
+    <div id="inicio" class="category-page active">
+        <!-- Sección Hero -->
+        <section class="hero">
+            <div class="container hero-content">
+                <h1>BICICLETAS DE ALTA GAMA</h1>
+                <p>Descubre la excelencia en bicicletas de montaña y ruta: GW, Classic, Kids y más</p>
+                <a href="#vehiculos" class="btn" onclick="event.preventDefault(); document.getElementById('vehiculos').scrollIntoView({ behavior: 'smooth' });">Explorar Colección</a>
+            </div>
+        </section>
+
+        <!-- Sección Vehículos Destacados -->
+        <section class="vehicles" id="vehiculos">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Bicicletas Destacadas</h2>
+                    <p>Selección exclusiva de las mejores bicicletas del mercado</p>
+                </div>
+                
+                <div class="vehicles-grid">
+                    <!-- GW Scorpion -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="./img/ABLANCOAMARILLO.png" alt="GW Scorpion">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>GW 060739</h3>
+                            <div class="price">$1,299</div>
+                            <div class="features">
+                                <span><i class="fas fa-cog"></i> 27 Vel</span>
+                                <span><i class="fas fa-weight"></i> 12.5 kg</span>
+                                <span><i class="fas fa-mountain"></i> MTB</span>
+                            </div>
+                            <p>Bicicleta de montaña con cuadro de aluminio ultraligero y suspensión delantera hidráulica.</p>
+                            <button class="btn" style="margin-top: 15px; width: 100%;" onclick="openProductModal(
+                                './img/ABLANCOAMARILLO.png',
+                                'GW 060739',
+                                '$1,299',
+                                'Bicicleta de montaña de alto rendimiento con cuadro de aluminio ultraligero y suspensión delantera hidráulica. Perfecta para terrenos exigentes y rutas técnicas.',
+                                [
+                                    {icon: 'fas fa-cog', text: '27 Velocidades Shimano'},
+                                    {icon: 'fas fa-weight', text: '12.5 kg - Cuadro Ultraligero'},
+                                    {icon: 'fas fa-mountain', text: 'MTB - Suspensión Hidráulica'},
+                                    {icon: 'fas fa-ruler-vertical', text: 'Tallas disponibles: S, M, L, XL'},
+                                    {icon: 'fas fa-tools', text: 'Frenos de Disco Hidráulicos'},
+                                    {icon: 'fas fa-bicycle', text: 'Neumáticos Todo Terreno 27.5 pulgadas'}
+                                ],[
+                                    {name: 'Blanco', image: './img/ABLANCOAMARILLO.png', swatch: '#FFFFFF'},
+                                    {name: 'Rojo', image: './img/ABLANCOROJO.png', swatch: '#FF0000'},
+                                    {name: 'Morado', image: './img/AMORADO.png', swatch: '#800080'},
+                                    {name: 'Naranja', image: './img/ANARANJA.png', swatch: '#FFA500'},
+                                    {name: 'Negro', image: './img/ANEGRO.png', swatch: '#000000'},
+                                    {name: 'Azul', image: './img/AAZUL.png', swatch: '#0000FF'}
+                                ]
+                            )">Consultar</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Trek Fuel EX 9.9 -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="./img/DCELESTE.png" alt="Trek Fuel EX 9.9">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>CLASSIC 060748</h3>
+                            <div class="price">$2,499</div>
+                            <div class="features">
+                                <span><i class="fas fa-cog"></i> 12 Vel</span>
+                                <span><i class="fas fa-weight"></i> 11.8 kg</span>
+                                <span><i class="fas fa-mountain"></i> Trail</span>
+                            </div>
+                            <p>Bicicleta de trail con cuadro de carbono OCLV, suspensión RockShox y transmisión SRAM GX Eagle.</p>
+                            <button class="btn" style="margin-top: 15px; width: 100%;" onclick="openProductModal(
+                                './img/DBLANCO.png',
+                                'CLASSIC 060748',
+                                '$327,000',
+                                'Bicicleta clásica con diseño retro y acabados premium. Un verdadero ícono del ciclismo urbano.',
+                                [
+                                    {icon: 'fas fa-cog', text: 'Grupo Shimano de 21 velocidades'},
+                                    {icon: 'fas fa-weight', text: 'Peso: 11.5 kg'},
+                                    {icon: 'fas fa-bicycle', text: 'Diseño clásico retro'},
+                                    {icon: 'fas fa-tools', text: 'Frenos de disco mecánicos'},
+                                    {icon: 'fas fa-ruler-vertical', text: 'Tallas: S, M, L'}
+                                ],
+                                [
+                                    {name: 'Salmón', image: './img/DSALMON.png', swatch: '#FFB5A7'},
+                                    {name: 'Rosa', image: './img/DROSA.png', swatch: '#FFD1DC'},
+                                    {name: 'Morado', image: './img/DMORADO.png', swatch: '#E0B0FF'},
+                                    {name: 'Celeste', image: './img/DCELESTE.png', swatch: '#B5E6F5'},
+                                    {name: 'Blanco', image: './img/DBLANCO.png', swatch: '#FFFFFF'}
+                                ]
+                            )">Consultar</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Specialized S-Works Tarmac -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="./img/EBLANCA.png" alt="Specialized S-Works Tarmac">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>KIDS 060355</h3>
+                            <div class="price">$3,299</div>
+                            <div class="features">
+                                <span><i class="fas fa-cog"></i> 22 Vel</span>
+                                <span><i class="fas fa-weight"></i> 6.8 kg</span>
+                                <span><i class="fas fa-road"></i> Ruta</span>
+                            </div>
+                            <p>Bicicleta de ruta profesional con cuadro de carbono FACT 12r y grupo Shimano Dura-Ace Di2.</p>
+                             <button class="btn" style="margin-top: 15px; width: 100%;" onclick="openProductModal(
+                                './img/ABLANCOAMARILLO.png',
+                                'GW 060747',
+                                '$280,000',
+                                'Bicicleta de alto rendimiento con geometría optimizada y componentes de primera.',
+                                [
+                                    {icon: 'fas fa-cog', text: 'Grupo Shimano de 22 velocidades'},
+                                    {icon: 'fas fa-weight', text: 'Peso: 11.9 kg'},
+                                    {icon: 'fas fa-mountain', text: 'Suspensión delantera aire'},
+                                    {icon: 'fas fa-tools', text: 'Frenos de disco hidráulicos'},
+                                    {icon: 'fas fa-ruler-vertical', text: 'Tallas: M, L, XL'}
+                                ],
+                                [
+                                    {name: 'Celeste', image: './img/ECELESTE.png', swatch: '#7FDFFF'},
+                                    {name: 'Blanco', image: './img/EBLANCA.png', swatch: '#FFFFFF'},
+                                    {name: 'Rosa', image: './img/EROSA.png', swatch: '#FF69B4'},
+                                    
+                                    {name: 'Azul', image: './img/EAZUL.png', swatch: '#0000FF'}
+                                ]
+                            )">Consultar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página GW Montaña -->
+    <div id="gw-montana" class="category-page">
+        <!-- Portada visual GW Montaña -->
+        <section class="hero hero-gw" style="background-image: url('./img/imagen2.png');">
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <h1>GW - Bicicletas de Montaña</h1>
+                <p>Descubre la excelencia en bicicletas GW de montaña: tecnología, diseño y aventura.</p>
+            </div>
+        </section>
+        <section class="vehicles">
+            <div class="container">
+                <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+                <h2 class="category-title">GW - Bicicletas de Montaña</h2>
+                
+                <div class="vehicles-grid">
+                    <!-- GW 060739 -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="img/ABLANCOAMARILLO.png" alt="GW 060739">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>GW 060739</h3>
+                            <div class="price">$1,299</div>
+                            <div class="features">
+                                <span><i class="fas fa-cog"></i> 27 Vel</span>
+                                <span><i class="fas fa-weight"></i> 12.5 kg</span>
+                                <span><i class="fas fa-mountain"></i> MTB</span>
+                            </div>
+                            <p>Bicicleta de montaña con cuadro de aluminio ultraligero y suspensión delantera hidráulica.</p>
+                            <button class="btn" style="margin-top: 15px; width: 100%;" onclick="openProductModal(
+                                './img/ABLANCOAMARILLO.png',
+                                'GW 060739',
+                                '$1,299',
+                                'Bicicleta de montaña premium con tecnología de vanguardia. Diseñada para el máximo rendimiento en terrenos exigentes.',
+                                [
+                                    {icon: 'fas fa-bicycle', text: 'Cuadro de Aluminio Ultraligero'},
+                                    {icon: 'fas fa-cog', text: 'Transmisión Shimano 27 velocidades'},
+                                    {icon: 'fas fa-weight', text: 'Peso: 12.5 kg'},
+                                    {icon: 'fas fa-mountain', text: 'Suspensión Delantera Hidráulica'},
+                                    {icon: 'fas fa-tools', text: 'Frenos de Disco Hidráulicos'},
+                                    {icon: 'fas fa-ruler-vertical', text: 'Tallas: S, M, L, XL'}
+                                ],
+                                [
+                                    {name: 'Blanco', image: './img/ABLANCOAMARILLO.png', swatch: '#FFFFFF'},
+                                    {name: 'Morado', image: './img/AMORADO.png', swatch: '#800080'},
+                                    {name: 'Negro', image: './img/ANEGRO.png', swatch: '#000000'},
+                                    {name: 'Naranja', image: './img/ANARANJA.png', swatch: '#FFA500'},
+                                    {name: 'Rojo', image: './img/ABLANCOROJO.png', swatch: '#FF0000'}
+                                ]
+                            )">Consultar</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Ferrari F8 Tributo -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="img/BBLANCO.png" alt="Ferrari F8 Tributo">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>GW 060728</h3>
+                            <div class="price">$280,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 340 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 720 CV</span>
+                                <span><i class="fas fa-car"></i> V8 Turbo</span>
+                            </div>
+                            <p>El heredero del 488 GTB con mejoras aerodinámicas y mayor potencia.</p>
+                            <button class="btn" style="margin-top: 15px; width: 100%;" onclick="openProductModal(
+                                './img/ABLANCOAMARILLO.png',
+                                'GW 060728',
+                                '$280,000',
+                                'Bicicleta de alto rendimiento con geometría optimizada y componentes de primera.',
+                                [
+                                    {icon: 'fas fa-cog', text: 'Grupo Shimano de 22 velocidades'},
+                                    {icon: 'fas fa-weight', text: 'Peso: 11.9 kg'},
+                                    {icon: 'fas fa-mountain', text: 'Suspensión delantera aire'},
+                                    {icon: 'fas fa-tools', text: 'Frenos de disco hidráulicos'},
+                                    {icon: 'fas fa-ruler-vertical', text: 'Tallas: M, L, XL'}
+                                ],
+                                [
+                                    {name: 'Celeste', image: './img/BCELESTE.png', swatch: '#7FDFFF'},
+                                    {name: 'Blanco', image: './img/BBLANCO.png', swatch: '#FFFFFF'},
+                                    {name: 'Rosa', image: './img/BROSA.png', swatch: '#FF69B4'},
+                                    {name: 'Negro', image: './img/BNEGRO.png', swatch: '#000000'},
+                                    {name: 'Azul', image: './img/BAZUL.png', swatch: '#0000FF'}
+                                ]
+                            )">Consultar</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Ferrari Roma -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="img/CNARANJA.png" alt="Ferrari Roma">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>GW 060750</h3>
+                            <div class="price">$247,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 320 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 620 CV</span>
+                                <span><i class="fas fa-car"></i> V8 Turbo</span>
+                            </div>
+                            <p>Elegante coupé que representa el concepto de "Dolce Vita".</p>
+                            
+                            <button class="btn" style="margin-top: 15px; width: 100%;" onclick="openProductModal(
+                                './img/CBLANCO.png',
+                                'GW 060750',
+                                '$247,000',
+                                'Bicicleta de alto rendimiento con geometría optimizada y componentes de primera.',
+                                [
+                                    {icon: 'fas fa-cog', text: 'Grupo Shimano de 22 velocidades'},
+                                    {icon: 'fas fa-weight', text: 'Peso: 11.9 kg'},
+                                    {icon: 'fas fa-mountain', text: 'Suspensión delantera aire'},
+                                    {icon: 'fas fa-tools', text: 'Frenos de disco hidráulicos'},
+                                    {icon: 'fas fa-ruler-vertical', text: 'Tallas: M, L, XL'}
+                                ],
+                                [
+                                    {name: 'Blanco', image: './img/CBLANCO.png', swatch: '#FFFFFF'},
+                                    {name: 'Naranja', image: './img/CNARANJA.png', swatch: '#FFA500'},
+                                    {name: 'Negro', image: './img/CNEGRO.png', swatch: '#000000'},
+                                    {name: 'Rojo', image: './img/CROJO.png', swatch: '#FF0000'},
+                                    {name: 'Verde', image: './img/CVERDE.png', swatch: '#008000'}
+                                ]
+                            )">Consultar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+<style>
+  .hero-gw {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0;
+    border-radius: 0 0 24px 24px;
+    position: relative;
+  }
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.55);
+    border-radius: 0 0 24px 24px;
+  }
+  .hero-gw .hero-content {
+    text-align: center;
+    color: #fff;
+    padding: 40px 0;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-gw .hero-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  }
+  .hero-gw .hero-content p {
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  }
+  @media (max-width: 768px) {
+    .hero-gw {
+      min-height: 300px;
+      border-radius: 0 0 12px 12px;
+    }
+    .hero-overlay {
+      border-radius: 0 0 12px 12px;
+    }
+    .hero-gw .hero-content h1 {
+      font-size: 1.5rem;
+    }
+    .hero-gw .hero-content p {
+      font-size: 0.95rem;
+    }
+  }
+</style>    <!-- Página Ferrari SUV -->
+    <div id="ferrari-suv" class="category-page">
+        <section class="vehicles">
+            <div class="container">
+                <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+                <h2 class="category-title">Ferrari - SUV</h2>
+                
+                <div class="vehicles-grid">
+                    <!-- Ferrari Purosangue -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Ferrari Purosangue">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>Ferrari Purosangue</h3>
+                            <div class="price">$390,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 310 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 725 CV</span>
+                                <span><i class="fas fa-car"></i> V12 SUV</span>
+                            </div>
+                            <p>El primer SUV de Ferrari, con motor V12 naturalmente aspirado.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Consultar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Ferrari Ediciones Limitadas -->
+    <div id="ferrari-limited" class="category-page">
+        <section class="vehicles">
+            <div class="container">
+                <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+                <h2 class="category-title">Ferrari - Ediciones Limitadas</h2>
+                
+                <div class="vehicles-grid">
+                    <!-- Ferrari Daytona SP3 -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Ferrari Daytona SP3">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>Ferrari Daytona SP3</h3>
+                            <div class="price">$2,200,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 340 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 840 CV</span>
+                                <span><i class="fas fa-car"></i> V12</span>
+                            </div>
+                            <p>Homenaje a los deportivos que dominaron Daytona en los años 60.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Consultar</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Ferrari Monza SP1 -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1563720223927-17a2d4c8c6bd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Ferrari Monza SP1">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>Ferrari Monza SP1</h3>
+                            <div class="price">$1,750,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 300 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 810 CV</span>
+                                <span><i class="fas fa-car"></i> Barchetta</span>
+                            </div>
+                            <p>Edición limitada inspirada en los sports cars de los años 50.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Consultar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Trek Montaña -->
+    <div id="trek-montana" class="category-page">
+        <section class="vehicles">
+            <div class="container">
+                <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+                <h2 class="category-title">Classic - Bicicletas Clasicas</h2>
+                
+                <div class="vehicles-grid">
+                    <!-- Lamborghini Huracán STO -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="img/DBLANCO.png" alt="Lamborghini Huracán STO">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>CLASSIC 060748</h3>
+                            <div class="price">$327,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 310 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 640 CV</span>
+                                <span><i class="fas fa-car"></i> V10</span>
+                            </div>
+                            <p>Versión de circuito homologada para carretera, inspirada en el Super Trofeo.</p>
+                               <button class="btn" style="margin-top: 15px; width: 100%;" onclick="openProductModal(
+                                './img/DBLANCO.png',
+                                'CLASSIC 060748',
+                                '$327,000',
+                                'Bicicleta clásica con diseño retro y acabados premium. Un verdadero ícono del ciclismo urbano.',
+                                [
+                                    {icon: 'fas fa-cog', text: 'Grupo Shimano de 21 velocidades'},
+                                    {icon: 'fas fa-weight', text: 'Peso: 11.5 kg'},
+                                    {icon: 'fas fa-bicycle', text: 'Diseño clásico retro'},
+                                    {icon: 'fas fa-tools', text: 'Frenos de disco mecánicos'},
+                                    {icon: 'fas fa-ruler-vertical', text: 'Tallas: S, M, L'}
+                                ],
+                                [
+                                    {name: 'Salmón', image: './img/DSALMON.png', swatch: '#FFB5A7'},
+                                    {name: 'Rosa', image: './img/DROSA.png', swatch: '#FFD1DC'},
+                                    {name: 'Morado', image: './img/DMORADO.png', swatch: '#E0B0FF'},
+                                    {name: 'Celeste', image: './img/DCELESTE.png', swatch: '#B5E6F5'},
+                                    {name: 'Blanco', image: './img/DBLANCO.png', swatch: '#FFFFFF'}
+                                ]
+                            )">Consultar</button>
+                        </div>
+                    </div>
+                    
+                  
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Lamborghini SUV -->
+    <div id="lamborghini-suv" class="category-page">
+        <section class="vehicles">
+            <div class="container">
+                <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+                <h2 class="category-title">Lamborghini - SUV</h2>
+                
+                <div class="vehicles-grid">
+                    <!-- Lamborghini Urus -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Lamborghini Urus">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>Lamborghini Urus</h3>
+                            <div class="price">$218,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 305 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 650 CV</span>
+                                <span><i class="fas fa-car"></i> SUV</span>
+                            </div>
+                            <p>El primer Super SUV que combina el alma de un superdeportivo.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Consultar</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Lamborghini Urus Performante -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Lamborghini Urus Performante">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>Lamborghini Urus Performante</h3>
+                            <div class="price">$260,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 306 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 666 CV</span>
+                                <span><i class="fas fa-car"></i> SUV</span>
+                            </div>
+                            <p>Versión más extrema del Urus, con mayor potencia y menor peso.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Consultar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Lamborghini Ediciones Limitadas -->
+    <div id="lamborghini-limited" class="category-page">
+        <section class="vehicles">
+            <div class="container">
+                <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+                <h2 class="category-title">Lamborghini - Ediciones Limitadas</h2>
+                
+                <div class="vehicles-grid">
+                    <!-- Lamborghini Sian -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Lamborghini Sian">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>Lamborghini Sian FKP 37</h3>
+                            <div class="price">$3,600,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 350 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 819 CV</span>
+                                <span><i class="fas fa-car"></i> Híbrido</span>
+                            </div>
+                            <p>El primer Lamborghini híbrido, con tecnología de supercondensadores.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Consultar</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Lamborghini Countach LPI 800-4 -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1624704760287-9d5a2c77e1ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Lamborghini Countach">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>Lamborghini Countach LPI 800-4</h3>
+                            <div class="price">$2,640,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 355 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 814 CV</span>
+                                <span><i class="fas fa-car"></i> Híbrido V12</span>
+                            </div>
+                            <p>Homenaje moderno al icónico Countach original de los años 70.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Consultar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Specialized Montaña -->
+    <div id="specialized-montana" class="category-page">
+        <section class="vehicles">
+            <div class="container">
+                <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+                <h2 class="category-title">NIÑOS - Bicicletas de Ruta</h2>
+                
+                <div class="vehicles-grid">
+                    <!-- Specialized Epic -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="./img/DROJO.png" alt="Specialized Epic">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>KIDS 060355</h3>
+                            <div class="price">$4,299</div>
+                            <div class="features">
+                                <span><i class="fas fa-cog"></i> 12 Vel</span>
+                                <span><i class="fas fa-weight"></i> 10.2 kg</span>
+                                <span><i class="fas fa-mountain"></i> XC</span>
+                            </div>
+                            <p>Bicicleta de montaña de alto rendimiento para competición XC.</p>
+                          <button class="btn" style="margin-top: 15px; width: 100%;" onclick="openProductModal(
+                                './img/ABLANCOAMARILLO.png',
+                                'KIDS 060355',
+                                '$280,000',
+                                'Bicicleta de alto rendimiento diseñada especialmente para niños.',
+                                [
+                                    {icon: 'fas fa-cog', text: 'Grupo Shimano de 18 velocidades'},
+                                    {icon: 'fas fa-weight', text: 'Peso: 10.5 kg'},
+                                    {icon: 'fas fa-mountain', text: 'Diseño ergonómico para niños'},
+                                    {icon: 'fas fa-tools', text: 'Frenos de disco seguros'},
+                                    {icon: 'fas fa-ruler-vertical', text: 'Tallas: XS, S, M'}
+                                ],
+                                [
+                                    {name: 'Azul', image: './img/DAZUL.png', swatch: '#0000FF'},
+                                    {name: 'Verde Neón', image: './img/DNEON.png', swatch: '#39FF14'},
+                                    {name: 'Verde', image: './img/DVERDE.png', swatch: '#008000'},
+                                    {name: 'Rojo', image: './img/DROJO.png', swatch: '#FF0000'}
+                                ]
+                            )">Consultar</button>
+                        </div>
+                    </div>
+                    
+
+                </div>
+
+                <!-- Sección de Ruta -->
+                <h2 class="category-title">NIÑAS - Bicicletas de Ruta</h2>
+                
+                <div class="vehicles-grid">
+                    <!-- Specialized Tarmac -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="./img/ECELESTE.png" alt="Specialized Tarmac">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>Kids 060747</h3>
+                            <div class="price">$5,499</div>
+                            <div class="features">
+                                <span><i class="fas fa-cog"></i> 22 Vel</span>
+                                <span><i class="fas fa-weight"></i> 6.8 kg</span>
+                                <span><i class="fas fa-road"></i> Ruta</span>
+                            </div>
+                            <p>Bicicleta de ruta profesional con aerodinámica superior.</p>
+                             <button class="btn" style="margin-top: 15px; width: 100%;" onclick="openProductModal(
+                                './img/ABLANCOAMARILLO.png',
+                                'GW 060747',
+                                '$280,000',
+                                'Bicicleta de alto rendimiento con geometría optimizada y componentes de primera.',
+                                [
+                                    {icon: 'fas fa-cog', text: 'Grupo Shimano de 22 velocidades'},
+                                    {icon: 'fas fa-weight', text: 'Peso: 11.9 kg'},
+                                    {icon: 'fas fa-mountain', text: 'Suspensión delantera aire'},
+                                    {icon: 'fas fa-tools', text: 'Frenos de disco hidráulicos'},
+                                    {icon: 'fas fa-ruler-vertical', text: 'Tallas: M, L, XL'}
+                                ],
+                                [
+                                    {name: 'Celeste', image: './img/ECELESTE.png', swatch: '#7FDFFF'},
+                                    {name: 'Blanco', image: './img/EBLANCA.png', swatch: '#FFFFFF'},
+                                    {name: 'Rosa', image: './img/EROSA.png', swatch: '#FF69B4'},
+                                    
+                                    {name: 'Azul', image: './img/EAZUL.png', swatch: '#0000FF'}
+                                ]
+                            )">Consultar</button>
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página McLaren Grand Tourer -->
+    <div id="mclaren-gt" class="category-page">
+        <section class="vehicles">
+            <div class="container">
+                <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+                <h2 class="category-title">McLaren - Grand Tourer</h2>
+                
+                <div class="vehicles-grid">
+                    <!-- McLaren GT -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="McLaren GT">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>McLaren GT</h3>
+                            <div class="price">$210,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 326 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 620 CV</span>
+                                <span><i class="fas fa-car"></i> Grand Tourer</span>
+                            </div>
+                            <p>El Grand Tourer más ligero de su categoría, diseñado para largos viajes.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Consultar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Motos -->
+    <div id="motos" class="category-page">
+        <section class="vehicles">
+            <div class="container">
+                <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+                <div class="section-title">
+                    <h2>Motos de Alta Gama</h2>
+                    <p>Las motos más exclusivas y tecnológicas del mercado</p>
+                </div>
+                
+                <div class="vehicles-grid">
+                    <!-- Ducati Streetfighter V4 -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Ducati Streetfighter V4">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>Ducati Streetfighter V4</h3>
+                            <div class="price">$24,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 290 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 208 CV</span>
+                                <span><i class="fas fa-motorcycle"></i> Naked</span>
+                            </div>
+                            <p>La naked más potente de Ducati, con tecnología derivada de MotoGP.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Consultar</a>
+                        </div>
+                    </div>
+                    
+                    <!-- BMW M 1000 RR -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1609630875171-b1321377ee65?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="BMW M 1000 RR">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>BMW M 1000 RR</h3>
+                            <div class="price">$32,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 314 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 212 CV</span>
+                                <span><i class="fas fa-motorcycle"></i> Deportiva</span>
+                            </div>
+                            <p>La primera motocicleta desarrollada por BMW M GmbH.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Consultar</a>
+                        </div>
+                    </div>
+
+                    <!-- MV Agusta Brutale 1000 RR -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1558618666-fcd25856cd55?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80" alt="MV Agusta Brutale 1000 RR">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>MV Agusta Brutale 1000 RR</h3>
+                            <div class="price">$38,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 300 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 208 CV</span>
+                                <span><i class="fas fa-motorcycle"></i> Naked</span>
+                            </div>
+                            <p>La naked más exclusiva y tecnológicamente avanzada de MV Agusta.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Consultar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Ofertas -->
+    <div id="ofertas" class="category-page">
+        <section class="offers">
+            <div class="container">
+                <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+                <div class="section-title">
+                    <h2>Ofertas Especiales</h2>
+                    <p>Descuentos exclusivos en modelos seleccionados</p>
+                </div>
+                
+                <div class="vehicles-grid">
+                    <!-- Porsche 911 Oferta -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Porsche 911">
+                        </div>
+                        <div class="vehicle-info">
+                            <div class="offer-badge">15% DESCUENTO</div>
+                            <h3>Porsche 911 Turbo S</h3>
+                            <div class="price">$216,000 <span style="text-decoration: line-through; color: var(--gray); font-size: 16px; margin-left: 10px;">$254,000</span></div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 330 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 650 CV</span>
+                                <span><i class="fas fa-car"></i> Bóxer Biturbo</span>
+                            </div>
+                            <p>Oferta limitada por tiempo. El 911 más potente de la historia.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Aprovechar Oferta</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Aston Martin Oferta -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Aston Martin">
+                        </div>
+                        <div class="vehicle-info">
+                            <div class="offer-badge">10% DESCUENTO</div>
+                            <h3>Aston Martin DBS</h3>
+                            <div class="price">$325,000 <span style="text-decoration: line-through; color: var(--gray); font-size: 16px; margin-left: 10px;">$361,000</span></div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 340 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 725 CV</span>
+                                <span><i class="fas fa-car"></i> V12 Twin-Turbo</span>
+                            </div>
+                            <p>Elegante grand tourer con descuento especial por lanzamiento.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Aprovechar Oferta</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Nuevos Lanzamientos -->
+    <div id="nuevos" class="category-page">
+        <section class="vehicles">
+            <div class="container">
+                <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+                <div class="section-title">
+                    <h2>Nuevos Lanzamientos</h2>
+                    <p>Los modelos más recientes en el mercado</p>
+                </div>
+                
+                <div class="vehicles-grid">
+                    <!-- Bugatti Chiron -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Bugatti Chiron">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>Bugatti Chiron Super Sport</h3>
+                            <div class="price">$3,900,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 440 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 1600 CV</span>
+                                <span><i class="fas fa-car"></i> W16</span>
+                            </div>
+                            <p>La máxima expresión de velocidad y lujo, con motor W16 de 8.0 litros.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Reservar</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Ferrari Daytona SP3 -->
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Ferrari Daytona SP3">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>Ferrari Daytona SP3</h3>
+                            <div class="price">$2,200,000</div>
+                            <div class="features">
+                                <span><i class="fas fa-tachometer-alt"></i> 340 km/h</span>
+                                <span><i class="fas fa-bolt"></i> 840 CV</span>
+                                <span><i class="fas fa-car"></i> V12</span>
+                            </div>
+                            <p>Homenaje a los deportivos que dominaron Daytona en los años 60.</p>
+                            <a href="#contacto" class="btn" style="margin-top: 15px; display: inline-block;">Reservar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Página Catálogo -->
+    <div id="catalogo" class="category-page">
+  <section class="vehicles">
+    <div class="container">
+      <a href="#" class="back-btn" onclick="showPage('inicio')"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+      <div class="section-title">
+        <h2>Catálogo Completo</h2>
+        <p>Explora toda nuestra colección de bicicletas</p>
+      </div>
+
+      <div class="vehicles-grid catalogo-grid">
+
+        <!-- Tarjeta 1: GW 060739 -->
+        <div class="vehicle-card" onclick="openCatalogoModal('./img/I1.png', 'Cadena de 6 vel 1/2 x 3/32 gris', '$23.000')">
+          <div class="vehicle-image">
+            <img src="./img/I1.png" alt="GW 060739">
+          </div>
+          <div class="vehicle-info">
+            <h3>Cadena de 6 vel 1/2 x 3/32 gris</h3>
+            <p>KMC Z6: Cadena fiable y duradera para 6 velocidades, cambios suaves garantizados..</p>
+            <div class="price">$23.000</div>
+
+            <!-- 🔽 Botón de WhatsApp -->
+           
+            </a>
+          </div>
+        </div>
+
+
+                    <!-- Tarjeta 2: CLASSIC 060748 -->
+                    <div class="vehicle-card" onclick="openCatalogoModal('./img/DBLANCO.png', 'CLASSIC 060748', '$327,000')">
+                        <div class="vehicle-image">
+                            <img src="./img/DBLANCO.png" alt="CLASSIC 060748">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>CLASSIC 060748</h3>
+                            <p>Bicicleta clásica con diseño retro y acabados premium. Un verdadero ícono del ciclismo urbano.</p>
+                            <div class="price">$327,000</div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 3: KIDS 060355 -->
+                    <div class="vehicle-card" onclick="openCatalogoModal('./img/EBLANCA.png', 'KIDS 060355', '$3,299')">
+                        <div class="vehicle-image">
+                            <img src="./img/EBLANCA.png" alt="KIDS 060355">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>KIDS 060355</h3>
+                            <p>Bicicleta de ruta profesional con cuadro de carbono y grupo Shimano Dura-Ace Di2.</p>
+                            <div class="price">$3,299</div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 4: GW 060728 -->
+                    <div class="vehicle-card" onclick="openCatalogoModal('./img/BBLANCO.png', 'GW 060728', '$280,000')">
+                        <div class="vehicle-image">
+                            <img src="./img/BBLANCO.png" alt="GW 060728">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>GW 060728</h3>
+                            <p>Bicicleta de alto rendimiento con geometría optimizada y componentes de primera.</p>
+                            <div class="price">$280,000</div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 5: GW 060750 -->
+                    <div class="vehicle-card" onclick="openCatalogoModal('./img/CNARANJA.png', 'GW 060750', '$247,000')">
+                        <div class="vehicle-image">
+                            <img src="./img/CNARANJA.png" alt="GW 060750">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>GW 060750</h3>
+                            <p>Elegante bicicleta que representa el concepto de máximo rendimiento y diseño.</p>
+                            <div class="price">$247,000</div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 6: CLASSIC 060747 -->
+                    <div class="vehicle-card" onclick="openCatalogoModal('./img/DROJO.png', 'CLASSIC 060747', '$5,499')">
+                        <div class="vehicle-image">
+                            <img src="./img/DROJO.png" alt="CLASSIC 060747">
+                        </div>
+                        <div class="vehicle-info">
+                            <h3>CLASSIC 060747</h3>
+                            <p>Bicicleta de montaña de alto rendimiento para competición XC.</p>
+                            <div class="price">$5,499</div>
+                        </div>
+                    </div>
+                    <!--------------------------------------------------->
+                </div>
+            </div>
+            
+        </section>
+    </div>
+
+    <!-- Pie de página -->
+    <!-- Social Media Menu -->
+    <div class="social-menu">
+        <div class="toggle-btn">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+        <div class="main">
+            <div class="up">
+                <button class="card1">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0,0,256,256" width="30px" height="30px" class="instagram">
+                        <g fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8.53333,8.53333)"><path d="M9.99805,3c-3.859,0 -6.99805,3.14195 -6.99805,7.00195v10c0,3.859 3.14195,6.99805 7.00195,6.99805h10c3.859,0 6.99805,-3.14195 6.99805,-7.00195v-10c0,-3.859 -3.14195,-6.99805 -7.00195,-6.99805zM22,7c0.552,0 1,0.448 1,1c0,0.552 -0.448,1 -1,1c-0.552,0 -1,-0.448 -1,-1c0,-0.552 0.448,-1 1,-1zM15,9c3.309,0 6,2.691 6,6c0,3.309 -2.691,6 -6,6c-3.309,0 -6,-2.691 -6,-6c0,-3.309 2.691,-6 6,-6zM15,11c-2.20914,0 -4,1.79086 -4,4c0,2.20914 1.79086,4 4,4c2.20914,0 4,-1.79086 4,-4c0,-2.20914 -1.79086,-4 -4,-4z"/></g></g>
+                    </svg>
+                </button>
+                <button class="card2">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0,0,256,256" width="30px" height="30px" class="facebook">
+                        <g fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8.53333,8.53333)"><path d="M15,3c-6.627,0 -12,5.373 -12,12c0,6.016 4.432,10.984 10.206,11.852v-8.672h-2.969v-3.154h2.969v-2.099c0,-3.475 1.693,-5 4.581,-5c1.383,0 2.115,0.103 2.461,0.149v2.753h-1.97c-1.226,0 -1.654,1.163 -1.654,2.473v1.724h3.593l-0.487,3.154h-3.106v8.697c5.857,-0.794 10.376,-5.802 10.376,-11.877c0,-6.627 -5.373,-12 -12,-12z"/></g></g>
+                    </svg>
+                </button>
+            </div>
+            <div class="down">
+                <button class="card3">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0,0,256,256" width="30px" height="30px" class="whatsapp">
+                        <g fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8.53333,8.53333)"><path d="M15,3c-6.627,0 -12,5.373 -12,12c0,2.25 0.625,4.339 1.705,6.139l-1.705,6.861l6.861,-1.705c1.8,1.08 3.889,1.705 6.139,1.705c6.627,0 12,-5.373 12,-12c0,-6.627 -5.373,-12 -12,-12zM15,5c5.546,0 10,4.454 10,10c0,5.546 -4.454,10 -10,10c-2.064,0 -3.979,-0.628 -5.572,-1.697l-0.428,-0.287l-4.342,1.085l1.085,-4.342l-0.287,-0.428c-1.069,-1.593 -1.697,-3.508 -1.697,-5.572c0,-5.546 4.454,-10 10,-10zM10.604,9.458c-0.211,0.039 -0.436,0.146 -0.604,0.314c-0.353,0.353 -1,1.058 -1,2.228c0,1.171 0.827,2.273 0.937,2.436c0.111,0.163 1.556,2.424 3.772,3.366c1.871,0.794 2.545,0.787 2.987,0.736c0.489,-0.057 1.577,-0.667 1.802,-1.311c0.224,-0.645 0.224,-1.199 0.157,-1.311c-0.066,-0.112 -0.246,-0.179 -0.514,-0.313c-0.268,-0.134 -1.577,-0.802 -1.823,-0.891c-0.246,-0.089 -0.491,-0.056 -0.669,0.179c-0.224,0.335 -0.558,0.802 -0.692,0.98c-0.134,0.179 -0.268,0.201 -0.491,0.112c-0.224,-0.089 -0.937,-0.358 -1.786,-1.137c-0.66,-0.602 -1.104,-1.346 -1.238,-1.569c-0.134,-0.223 -0.011,-0.346 0.089,-0.458c0.101,-0.111 0.246,-0.291 0.369,-0.436c0.112,-0.134 0.149,-0.224 0.224,-0.379c0.075,-0.156 0.034,-0.291 -0.018,-0.403c-0.052,-0.112 -0.447,-1.117 -0.626,-1.524c-0.156,-0.346 -0.324,-0.346 -0.447,-0.346c-0.112,0 -0.246,-0.022 -0.379,-0.022z"/></g></g>
+                    </svg>
+                </button>
+                <button class="card4" id="maps-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0,0,256,256" width="30px" height="30px" class="maps">
+                        <g fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                            <g transform="scale(8.53333,8.53333)">
+                                <path d="M15,3c-4.971,0 -9,4.029 -9,9c0,6.75 9,15 9,15c0,0 9,-8.25 9,-15c0,-4.971 -4.029,-9 -9,-9zM15,15c-1.657,0 -3,-1.343 -3,-3c0,-1.657 1.343,-3 3,-3c1.657,0 3,1.343 3,3c0,1.657 -1.343,3 -3,3z"/>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+<footer id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+             
+            <div class="copyright">
+                <p>&copy; 2025 BicycleParts. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // (modal functions consolidated later)
+
+        // Funcionalidad del selector de colores
+        document.addEventListener('DOMContentLoaded', function() {
+            // Selector de colores
+            const colorToggles = document.querySelectorAll('.color-toggle');
+            const colorOptions = document.querySelectorAll('.color-option');
+
+            colorToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    const selector = this.closest('.vehicle-card').querySelector('.color-selector');
+                    selector.classList.toggle('active');
+                    e.stopPropagation();
+                });
+            });
+
+            colorOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const card = this.closest('.vehicle-card');
+                    const mainImage = card.querySelector('#mainBikeImage');
+                    const newImageSrc = this.dataset.image;
+                    
+                    // Actualizar imagen principal
+                    mainImage.src = newImageSrc;
+                    
+                    // Actualizar estado activo
+                    card.querySelectorAll('.color-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
+            });
+
+            // Cerrar selector al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.color-selector') && !e.target.closest('.color-toggle')) {
+                    document.querySelectorAll('.color-selector').forEach(selector => {
+                        selector.classList.remove('active');
+                    });
+                }
+            });
+        });
+
+        // JavaScript para mostrar páginas específicas con loader
+        function showPage(pageId) {
+            
+            const loader = document.getElementById('global-loader');
+
+            const switchPage = () => {
+                // Ocultar todas las páginas
+                document.querySelectorAll('.category-page').forEach(page => page.classList.remove('active'));
+                // Mostrar la página solicitada (si existe)
+                const target = document.getElementById(pageId);
+                if (target) {
+                    target.classList.add('active');
+                    // Cerrar el menú móvil si está abierto
+                    if (window.innerWidth <= 768) {
+                        closeMobileMenu();
+                    }
+                }
+                // Scroll al inicio suavemente
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            };
+
+            if (loader) {
+                // Mostrar loader durante 400ms antes de cambiar de página
+                loader.style.display = 'flex';
+                setTimeout(() => {
+                    switchPage();
+                    loader.style.display = 'none';
+                }, 400);
+            } else {
+                // Fallback: cambiar inmediatamente
+                switchPage();
+            }
+
+            // no return value needed; callers can use return false if they want to prevent default
+        }
+
+        // Mejorado Mobile Menu Handler
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const nav = document.querySelector('nav');
+        let isMenuOpen = false;
+
+        function openMobileMenu() {
+            isMenuOpen = true;
+            nav.classList.add('active');
+            mobileMenu.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            mobileMenu.querySelector('i').classList.replace('fa-bars', 'fa-times');
+            
+            // Añadir overlay
+            if (!document.querySelector('.menu-overlay')) {
+                const overlay = document.createElement('div');
+                overlay.className = 'menu-overlay';
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    backdrop-filter: blur(3px);
+                    z-index: 998;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                `;
+                document.body.appendChild(overlay);
+                setTimeout(() => overlay.style.opacity = '1', 0);
+            }
+        }
+
+        function closeMobileMenu() {
+            isMenuOpen = false;
+            nav.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            document.body.style.overflow = '';
+            mobileMenu.querySelector('i').classList.replace('fa-times', 'fa-bars');
+            
+            // Remover overlay con animación
+            const overlay = document.querySelector('.menu-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 300);
+            }
+        }
+
+        mobileMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (isMenuOpen) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
+
+        // Cierra el menú al hacer clic en un enlace
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                closeMobileMenu();
+            });
+        });
+
+        // Cierra el menú al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (isMenuOpen && !nav.contains(e.target) && !mobileMenu.contains(e.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        // Previene el scroll cuando el menú está abierto
+        nav.addEventListener('touchmove', function(e) {
+            e.stopPropagation();
+        }, { passive: true });
+
+        // Manejo mejorado de dropdowns en móvil
+        document.querySelectorAll('nav ul li a.has-dropdown').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const dropdownMenu = this.nextElementSibling;
+                    const icon = this.querySelector('i');
+                    
+                    // Cerrar otros dropdowns
+                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                        if (menu !== dropdownMenu && menu.style.display === 'block') {
+                            menu.style.display = 'none';
+                            const menuIcon = menu.previousElementSibling.querySelector('i');
+                            if (menuIcon) {
+                                menuIcon.style.transform = 'rotate(0)';
+                            }
+                        }
+                    });
+                    
+                    // Toggle current dropdown
+                    if (dropdownMenu) {
+                        const isOpen = dropdownMenu.style.display === 'block';
+                        dropdownMenu.style.display = isOpen ? 'none' : 'block';
+                        if (icon) {
+                            icon.style.transform = isOpen ? 'rotate(0)' : 'rotate(-180deg)';
+                        }
+                    }
+                }
+            });
+        });
+
+        // Cerrar dropdowns al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768 && !e.target.closest('.has-dropdown')) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                    const icon = menu.previousElementSibling.querySelector('i');
+                    if (icon) {
+                        icon.style.transform = 'rotate(0)';
+                    }
+                });
+            }
+        });
+
+        // Control del menú social mejorado
+        document.querySelector('.toggle-btn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.querySelector('.social-menu').classList.toggle('active');
+            this.querySelector('i').classList.toggle('fa-chevron-left');
+            this.querySelector('i').classList.toggle('fa-times');
+        });
+
+        // Cerrar menú social al tocar fuera
+        document.addEventListener('click', function(e) {
+            const socialMenu = document.querySelector('.social-menu');
+            if (!socialMenu.contains(e.target)) {
+                socialMenu.classList.remove('active');
+                const icon = socialMenu.querySelector('.toggle-btn i');
+                if (icon) {
+                    icon.classList.add('fa-chevron-left');
+                    icon.classList.remove('fa-times');
+                }
+            }
+        });
+
+        // (modal functions consolidated later in file)
+
+        // Control de colores en el modal
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remover clase activa de todos los botones
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                // Agregar clase activa al botón clickeado
+                this.classList.add('active');
+                // Actualizar imagen
+                const newImage = this.dataset.image;
+                document.getElementById('modalProductImage').src = newImage;
+            });
+        });
+
+        // Inicializar los botones sociales
+        document.querySelector('.card1').addEventListener('click', () => window.open('https://instagram.com/bicycleparts', '_blank'));
+        document.querySelector('.card2').addEventListener('click', () => window.open('https://www.facebook.com/share/16VbJnNf7P/?mibextid=wwXIfr', '_blank'));
+        document.querySelector('.card3').addEventListener('click', () => window.open('https://wa.me/573224167942', '_blank'));
+        document.querySelector('#maps-button').addEventListener('click', () => window.open('https://www.google.com/maps/search/?api=1&query=Calle+44+%23+6+-+02+Yopal+Casanare', '_blank'));
+        // Funciones del modal (unica implementación consolidada)
+        function openProductModal(image, title, price, description, specs, colors) {
+            const modal = document.getElementById('productModal');
+            if (!modal) return;
+
+            // Actualizar contenido
+            const imgEl = document.getElementById('modalProductImage');
+            document.getElementById('modalProductTitle').textContent = title;
+            document.getElementById('modalProductPrice').textContent = price;
+            document.getElementById('modalProductDesc').textContent = description;
+
+            // Especificaciones
+            const specsList = document.getElementById('modalProductSpecs');
+            specsList.innerHTML = '';
+            if (Array.isArray(specs)) {
+                specs.forEach(spec => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="${spec.icon}"></i> ${spec.text}`;
+                    specsList.appendChild(li);
+                });
+            }
+
+            // Colores: si se pasan, construir los botones dinámicamente.
+            // Si NO se pasan, no borrar los botones existentes; solo se enlazan los handlers.
+            const selector = modal.querySelector('.color-selector');
+            if (selector) {
+                if (Array.isArray(colors) && colors.length) {
+                    selector.innerHTML = '';
+                    colors.forEach((c, idx) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'color-btn' + (idx === 0 ? ' active' : '');
+                        btn.style.backgroundColor = c.swatch || c.color || '#ddd';
+                        btn.setAttribute('data-image', c.image || image);
+                        btn.setAttribute('title', c.name || 'Color');
+                        btn.addEventListener('click', function() {
+                            // desactivar otros
+                            selector.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                            imgEl.src = this.getAttribute('data-image');
+                        });
+                        selector.appendChild(btn);
+                    });
+                    // set initial image from first color if provided
+                    imgEl.src = colors[0].image || image;
+                } else {
+                    // No se pasaron colores: mantén los botones existentes y enlaza sus handlers
+                    const existing = selector.querySelectorAll('.color-btn');
+                    if (existing.length) {
+                        // Si alguno ya tiene active, usar su imagen; si no, marcar el primero
+                        let used = false;
+                        existing.forEach((b, i) => {
+                            // attach handler
+                            b.addEventListener('click', function() {
+                                selector.querySelectorAll('.color-btn').forEach(x => x.classList.remove('active'));
+                                this.classList.add('active');
+                                imgEl.src = this.getAttribute('data-image') || image;
+                            });
+                            if (b.classList.contains('active')) {
+                                imgEl.src = b.getAttribute('data-image') || image;
+                                used = true;
+                            }
+                        });
+                        if (!used) {
+                            const first = existing[0];
+                            if (first) {
+                                first.classList.add('active');
+                                imgEl.src = first.getAttribute('data-image') || image;
+                            } else {
+                                imgEl.src = image;
+                            }
+                        }
+                    } else {
+                        imgEl.src = image;
+                    }
+                }
+            } else {
+                imgEl.src = image;
+            }
+
+            // Mostrar modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('productModal');
+            if (!modal) return;
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Cerrar modal al hacer clic fuera
+        (function() {
+            const modal = document.getElementById('productModal');
+            if (!modal) return;
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) closeProductModal();
+            });
+        })();
+
+        // Funciones para el Modal del Catálogo
+        function openCatalogoModal(imageSrc, title, price) {
+            const modal = document.getElementById('catalogoModal');
+            document.getElementById('catalogoModalImage').src = imageSrc;
+            document.getElementById('catalogoModalTitle').textContent = title;
+            document.getElementById('catalogoModalPrice').textContent = price;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCatalogoModal() {
+            const modal = document.getElementById('catalogoModal');
+            if (!modal) return;
+            modal.classList.add('closing');
+            setTimeout(() => {
+                modal.classList.remove('active');
+                modal.classList.remove('closing');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        // Cerrar modal del catálogo al hacer clic fuera
+        (function() {
+            const modal = document.getElementById('catalogoModal');
+            if (!modal) return;
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) closeCatalogoModal();
+            });
+        })();
+    </script>
+</body>
+</html>
